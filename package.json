@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon index.ts"
   },
   "author": "Kiryl Kavalenka",
   "license": "ISC",
@@ -20,7 +20,11 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
+    "@types/node": "^18.0.6",
     "dotenv": "^16.0.1",
-    "express": "^4.18.1"
+    "express": "^4.18.1",
+    "pg": "^8.7.3",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.21.3"
   }
 }
