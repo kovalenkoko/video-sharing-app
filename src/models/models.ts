@@ -22,6 +22,14 @@ const VideoItem = sequelizeInstance.define("video_item", {
     video: {type: DataTypes.STRING, allowNull: false},
 })
 
+// const SharedVideo = sequelizeInstance.define("shared_video", {
+//     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+//     user_owner_id: {type: DataTypes.INTEGER,  allowNull: false},
+//     user_id: {type: DataTypes.INTEGER,  allowNull: false},
+//     video_item_id: {type: DataTypes.INTEGER,  allowNull: false},
+//
+// })
+
 User.hasOne(Gallery)
 Gallery.belongsTo(User)
 
@@ -31,9 +39,18 @@ GalleryVideoItem.belongsTo(Gallery)
 GalleryVideoItem.hasOne(VideoItem)
 VideoItem.belongsTo(GalleryVideoItem)
 
+// User.hasOne(SharedVideo)
+// SharedVideo.belongsTo(User)
+//
+// SharedVideo.hasOne(VideoItem)
+// VideoItem.belongsTo(SharedVideo)
+//
+
+
 module.exports = {
     User,
     Gallery,
     GalleryVideoItem,
-    VideoItem
+    VideoItem,
+    //SharedVideo,
 }
