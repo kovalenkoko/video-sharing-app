@@ -1,10 +1,9 @@
 export {}
 const Router = require("express")
-const VideoController = require("../controllers/videoController")
+const videoController = require("../controllers/videoController")
 const router = new Router()
 
-router.post("/")
-router.post("/")
+router.post("/", videoController.create)
 router.get("/:id")
 router.delete("/:id")
 router.put("/:id")
