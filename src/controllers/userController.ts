@@ -6,6 +6,7 @@ const tokenService = require("../service/tokenService")
 const UserDto = require("../dtos/userDto")
 const {validationResult} = require("express-validator")
 
+
 class UserController {
     async registration(req, res, next) {
         try {
@@ -23,7 +24,7 @@ class UserController {
             const userDto = new UserDto(user)
             const tokens = tokenService.generateTokens({...userDto})
             await tokenService.saveToken(userDto.id, tokens.refreshToken)
-            const userData = {...tokens, user: UserDto}
+            const userData = Object.assign(tokens, userDto)
 
             res.cookie("refreshToken", userData.refreshToken, {maxAge: 60 * 24 * 60 * 60 * 1000, httpOnly: true})
             return res.json(userData)
@@ -31,15 +32,27 @@ class UserController {
             next(ApiError.badRequest(e.message))
         }
     }
-    async login(req, res) {
+    async login(req, res, next) {
+        const {email, password} = req.body
+        const user = await User.findOne({where: {email: email}})
+        if(!user){
+            return next(ApiError.badRequest("User not found"))
+        }
+        const isPassEquals = await bcrypt.compare(password, user.password)
+        if(!isPassEquals){
+            return next(ApiError.badRequest("Invalid password"))
+        }
+        const userDto = new UserDto(user)
+        const tokens = tokenService.generateTokens({...userDto})
+        await tokenService.saveToken(userDto.id, tokens.refreshToken)
+        const userData = Object.assign(tokens, userDto)
+
+        res.cookie("refreshToken", userData.refreshToken, {maxAge: 60 * 24 * 60 * 60 * 1000, httpOnly: true})
+        return res.json(userData)
 
     }
-    async check(req, res, next) {
-        const query = req.query
-        if(!query.id){
-            return next(ApiError.badRequest("id was not received"))
-        }
-        res.json(query)
+    async logout(req, res, next) {
+
     }
 }
 module.exports = new UserController()
