@@ -52,7 +52,13 @@ class UserController {
 
     }
     async logout(req, res, next) {
-
+        const {refreshToken} = req.cookies
+        const tokenData = tokenService.deleteToken(refreshToken)
+        if(!tokenData){
+            return next(ApiError.badRequest("Token has not been deleted"))
+        }
+        res.clearCookie("refreshToken");
+        return res.json({message: "Token has been successfully deleted"})
     }
 }
 module.exports = new UserController()
