@@ -41,8 +41,8 @@ Gallery.belongsTo(User)
 Gallery.hasMany(GalleryVideoItem)
 GalleryVideoItem.belongsTo(Gallery)
 
-GalleryVideoItem.hasOne(VideoItem)
-VideoItem.belongsTo(GalleryVideoItem)
+VideoItem.hasOne(GalleryVideoItem)
+GalleryVideoItem.belongsTo(VideoItem)
 
 User.hasOne(Token)
 Token.belongsTo(User)

@@ -1,6 +1,6 @@
 export{}
 const ApiError = require("../error/ApiError")
-const {User} = require("../models/models")
+const {User, Gallery} = require("../models/models")
 const bcrypt = require("bcrypt")
 const tokenService = require("../service/tokenService")
 const UserDto = require("../dtos/userDto")
@@ -21,6 +21,8 @@ class UserController {
             }
             const hashPassword = await bcrypt.hash(password, 3)
             const user = await User.create({email, password: hashPassword})
+            const userGallery = await Gallery.create({userId: user.id})
+
             const userDto = new UserDto(user)
             const tokens = tokenService.generateTokens({...userDto})
             await tokenService.saveToken(userDto.id, tokens.refreshToken)
