@@ -1,7 +1,6 @@
 export{}
 const jwt = require("jsonwebtoken")
 const {Token} = require("../models/models")
-const ApiError = require("../error/ApiError")
 
 class TokenService{
     generateTokens(payload){
@@ -45,11 +44,5 @@ class TokenService{
         const tokenData = await Token.findOne({where:{refreshToken: refreshToken}})
         return tokenData
     }
-    async refresh(refreshToken){
-        if(!refreshToken){
-            throw ApiError.unauthorizedError()
-        }
-    }
-
 }
 module.exports = new TokenService()
