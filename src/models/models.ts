@@ -18,7 +18,7 @@ const GalleryVideoItem = sequelize.define("gallery_video_item", {
 
 const VideoItem = sequelize.define("video_item", {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    title: {type: DataTypes.STRING, allowNull: false},
+    title: {type: DataTypes.STRING, allowNull: false, unique: true},
     description: {type: DataTypes.STRING, allowNull: false},
     video: {type: DataTypes.STRING, allowNull: false},
 })
@@ -27,13 +27,9 @@ const Token = sequelize.define("token", {
     refreshToken: {type: DataTypes.STRING, allowNull: false},
 })
 
-// const SharedVideo = sequelize.define("shared_video", {
-//     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-//     user_owner_id: {type: DataTypes.INTEGER,  allowNull: false},
-//     user_id: {type: DataTypes.INTEGER,  allowNull: false},
-//     video_item_id: {type: DataTypes.INTEGER,  allowNull: false},
-//
-// })
+const SharedVideo = sequelize.define("shared_video", {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+})
 
 User.hasOne(Gallery)
 Gallery.belongsTo(User)
@@ -47,13 +43,12 @@ GalleryVideoItem.belongsTo(VideoItem)
 User.hasOne(Token)
 Token.belongsTo(User)
 
-// User.hasOne(SharedVideo)
-// SharedVideo.belongsTo(User)
-//
-// SharedVideo.hasOne(VideoItem)
-// VideoItem.belongsTo(SharedVideo)
-//
 
+SharedVideo.belongsTo(User, {as: "videoOwner", foreignKey: "videoOwnerId"})
+SharedVideo.belongsTo(User, {as: "videoReceiver", foreignKey: "videoReceiverId"})
+
+VideoItem.hasMany(SharedVideo)
+SharedVideo.belongsTo(VideoItem)
 
 module.exports = {
     User,
@@ -61,5 +56,5 @@ module.exports = {
     GalleryVideoItem,
     VideoItem,
     Token,
-    //SharedVideo,
+    SharedVideo,
 }

@@ -1,6 +1,6 @@
 export{}
 const ApiError = require("../error/ApiError")
-const {User, Gallery} = require("../models/models")
+const {User, Gallery, SharedVideo, VideoItem} = require("../models/models")
 const bcrypt = require("bcrypt")
 const tokenService = require("../service/tokenService")
 const UserDto = require("../dtos/userDto")
@@ -58,13 +58,28 @@ class UserController {
 
     }
     async logout(req, res, next) {
-        const {refreshToken} = req.cookies
-        const tokenData = tokenService.deleteToken(refreshToken)
-        if(!tokenData){
-            return next(ApiError.badRequest("Token has not been deleted"))
+        try {
+            const {refreshToken} = req.cookies
+            const tokenData = tokenService.deleteToken(refreshToken)
+            if(!tokenData){
+                return next(ApiError.badRequest("Token has not been deleted"))
+            }
+            res.clearCookie("refreshToken");
+            return res.json({message: "Token has been successfully deleted"})
+        }catch (e:any){
+            next(ApiError.badRequest(e.message))
         }
-        res.clearCookie("refreshToken");
-        return res.json({message: "Token has been successfully deleted"})
+    }
+    async getAll(req, res, next){
+        try {
+            const accessToken = req.headers.authorization.split(" ")[1]
+            const userData = tokenService.validateAccessToken(accessToken)
+            const usersFromDb = await User.findAll()
+            const users = usersFromDb.filter(user => user.id != userData.id)
+            res.json(users)
+        }catch (e:any){
+            next(ApiError.badRequest(e.message))
+        }
     }
     async refresh(req, res, next){
         try {
@@ -89,6 +104,52 @@ class UserController {
             return res.json(userInfo)
         }catch (e:any){
             next(ApiError.internal(e.message))
+        }
+    }
+    async shareVideo(req, res, next){
+        try {
+            const accessToken = req.headers.authorization.split(" ")[1]
+            const userData = tokenService.validateAccessToken(accessToken)
+            const {title, idReceiver} = req.body
+            if(!title || !idReceiver){
+                next(ApiError.badRequest("Title or receiver's id not received"))
+            }
+            const videoItem = await VideoItem.findOne({where:{title}})
+
+            let sharedVideo = await SharedVideo.findOne({where:{videoOwnerId: userData.id, videoReceiverId: idReceiver, videoItemId: videoItem.id }})
+            if(sharedVideo){
+                return res.json({message: "You have already shared this video with this user"})
+            }else{
+                sharedVideo = await SharedVideo.create({videoOwnerId: userData.id, videoReceiverId: idReceiver, videoItemId: videoItem.id })
+
+            }
+            res.json({message: "Video has been successfully shared", ...sharedVideo})
+        }catch (e:any){
+            next(ApiError.badRequest(e.message))
+        }
+    }
+    async getShared(req, res, next){
+        try {
+            const accessToken = req.headers.authorization.split(" ")[1]
+            const userData = tokenService.validateAccessToken(accessToken)
+            const shared = await SharedVideo.findAll({where: {videoReceiverId:userData.id}})
+
+            const sharedVideos: object[] = []
+            for await (const video of shared) {
+                const videoItem = await VideoItem.findOne({where:{id: video.videoItemId}})
+                const videoObject = {
+                    fromUserWithId: video.videoOwnerId,
+                    dataValues: {
+                        ...videoItem.dataValues
+                    }
+                }
+                sharedVideos.push(videoObject)
+            }
+
+            res.json(sharedVideos)
+
+        }catch (e:any){
+            next(ApiError.badRequest(e.message))
         }
     }
 }
