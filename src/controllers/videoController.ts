@@ -4,6 +4,9 @@ const path = require("path")
 const {VideoItem} = require("../models/models")
 const ApiError = require("../error/ApiError")
 const fs = require("fs")
+const log4js = require("log4js")
+const videoLogger = log4js.getLogger("gallery")
+
 
 class VideoController {
     async create(req, res, next) {
@@ -16,6 +19,7 @@ class VideoController {
             const videoItem = await VideoItem.create({title, description, video : fileName})
             return res.json(videoItem)
         }catch (e:any){
+            videoLogger.error(e.message)
             next(ApiError.badRequest(e.message))
         }
     }
@@ -24,6 +28,7 @@ class VideoController {
           const videos = await VideoItem.findAll()
           return res.json(videos)
       }catch (e:any){
+          videoLogger.error(e.message)
           next(ApiError.badRequest(e.message))
       }
     }
@@ -33,6 +38,7 @@ class VideoController {
             const video = await VideoItem.findOne({where:{id}})
             return res.json(video)
         }catch (e:any){
+            videoLogger.error(e.message)
             next(ApiError.badRequest(e.message))
         }
     }
@@ -50,6 +56,7 @@ class VideoController {
 
             return res.json({message: `VideoItem with id:${id} was successfully deleted`})
         }catch (e:any){
+            videoLogger.error(e.message)
             next(ApiError.badRequest(e.message))
         }
     }
@@ -65,6 +72,7 @@ class VideoController {
             )
             return res.json({message: `VideoItem with id:${id} was successfully updated`})
         }catch (e:any){
+            videoLogger.error(e.message)
             next(ApiError.badRequest(e.message))
         }
     }

@@ -8,7 +8,13 @@ const errorHandler = require("./src/middleware/ErrorHandlingMiddleware")
 const fileUpload = require("express-fileupload")
 const path = require("path")
 const cookieParser = require("cookie-parser")
+const log4js = require("log4js");
 
+
+log4js.configure({
+    appenders: { users: { type: "file", filename: "users.log" },gallery: { type: "file", filename: "gallery.log" }, video:{ type: "file", filename: "video.log" } },
+    categories: { default: { appenders: ["users"], level: "error" }, gallery: { appenders: ["gallery"], level: "error" }, video:{appenders: ["video"], level: "error"}},
+});
 
 
 const app = express()

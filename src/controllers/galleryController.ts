@@ -5,6 +5,8 @@ const uuid = require("uuid")
 const path = require("path")
 const fs = require("fs")
 const tokenService = require("../service/tokenService")
+const log4js = require("log4js")
+const galleryLogger = log4js.getLogger("gallery")
 
 class GalleryController{
     async getGallery(req, res, next){
@@ -25,6 +27,7 @@ class GalleryController{
             }
             return res.json(videos)
         }catch (e:any){
+            galleryLogger.error(e.message)
             next(ApiError.badRequest(e.message))
         }
     }
@@ -46,6 +49,7 @@ class GalleryController{
             res.json({message: `Video added to the user's gallery with id:${userData.id}`})
 
         }catch (e:any){
+            galleryLogger.error(e.message)
             next(ApiError.badRequest(e.message))
         }
     }
@@ -71,6 +75,7 @@ class GalleryController{
             res.json({message: `VideoItem with title: ${title} from gallery with id: ${gallery.id} was successfully deleted`})
 
         }catch (e:any){
+            galleryLogger.error(e.message)
             next(ApiError.badRequest(e.message))
         }
     }
@@ -90,6 +95,7 @@ class GalleryController{
             res.json({message: `VideoItem with old title: ${title} was successfully updated`})
 
         }catch (e:any){
+            galleryLogger.error(e.message)
             next(ApiError.badRequest(e.message))
         }
 

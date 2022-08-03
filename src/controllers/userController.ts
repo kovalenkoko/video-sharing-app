@@ -5,7 +5,8 @@ const bcrypt = require("bcrypt")
 const tokenService = require("../service/tokenService")
 const UserDto = require("../dtos/userDto")
 const {validationResult} = require("express-validator")
-
+const log4js = require("log4js");
+const userLogger = log4js.getLogger("users");
 
 class UserController {
     async registration(req, res, next) {
@@ -31,6 +32,7 @@ class UserController {
             res.cookie("refreshToken", userData.refreshToken, {maxAge: 60 * 24 * 60 * 60 * 1000, httpOnly: true})
             return res.json(userData)
         }catch (e:any){
+            userLogger.error(e.message)
             next(ApiError.badRequest(e.message))
         }
     }
@@ -53,6 +55,7 @@ class UserController {
             res.cookie("refreshToken", userData.refreshToken, {maxAge: 60 * 24 * 60 * 60 * 1000, httpOnly: true})
             return res.json(userData)
         }catch (e:any){
+            userLogger.error(e.message)
             next(ApiError.badRequest(e.message))
         }
 
@@ -67,6 +70,7 @@ class UserController {
             res.clearCookie("refreshToken");
             return res.json({message: "Token has been successfully deleted"})
         }catch (e:any){
+            userLogger.error(e.message)
             next(ApiError.badRequest(e.message))
         }
     }
@@ -78,6 +82,7 @@ class UserController {
             const users = usersFromDb.filter(user => user.id != userData.id)
             res.json(users)
         }catch (e:any){
+            userLogger.error(e.message)
             next(ApiError.badRequest(e.message))
         }
     }
@@ -103,6 +108,7 @@ class UserController {
             res.cookie("refreshToken", userInfo.refreshToken, {maxAge: 60 * 24 * 60 * 60 * 1000, httpOnly: true})
             return res.json(userInfo)
         }catch (e:any){
+            userLogger.error(e.message)
             next(ApiError.internal(e.message))
         }
     }
@@ -125,6 +131,7 @@ class UserController {
             }
             res.json({message: "Video has been successfully shared", ...sharedVideo})
         }catch (e:any){
+            userLogger.error(e.message)
             next(ApiError.badRequest(e.message))
         }
     }
@@ -149,6 +156,7 @@ class UserController {
             res.json(sharedVideos)
 
         }catch (e:any){
+            userLogger.error(e.message)
             next(ApiError.badRequest(e.message))
         }
     }

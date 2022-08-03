@@ -19,4 +19,5 @@ router.get("/refresh", userController.refresh)
 router.post("/share",authMiddleware, userController.shareVideo)
 router.get("/", authMiddleware, userController.getAll)
 router.get("/shared", authMiddleware, userController.getShared)
+
 module.exports = router
