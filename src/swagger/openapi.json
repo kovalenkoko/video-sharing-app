@@ -1,0 +1,350 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "video-sharing-app API",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000"
+    }
+  ],
+  "tags": [
+    {
+      "name": "user",
+      "description": "Operations about user"
+    }
+  ],
+  "paths": {
+    "/api/user": {
+      "get": {
+        "summary": "Returns all registered users",
+        "description": "This can only be done by the logged in user.",
+        "tags": [
+          "user"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authorized"
+          }
+        }
+      }
+    },
+    "/api/user/refresh": {
+      "get": {
+        "summary": "Get new access token",
+        "description": "Refreshes access token",
+        "tags": [
+          "user"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                },
+                "example": {
+                  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJ1c2VyMTJAZ21haWwuY29tIiwiaWF0IjoxNjU5NjA0NzQwLCJleHAiOjNTk2MDY1NDB9.AMIyTJgEcBd5ZgJjOBuYS6n8xasi-41bKrwq-OHjFXM",
+                  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJ1c2VyMTJAZ21haWwuY29tIiwiaWF0IjoxNjU5NjA0NzQwLCJleHAiOjNjIxOTY3NDB9.OdmG2_iDhFC7ZLJ_C_LHO_ZqFTqNUNoayKejzY0Pcc4",
+                  "id": 5,
+                  "email": "user123@gmail.com"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bad request"
+          }
+        }
+      }
+    },
+    "/api/user/shared": {
+      "get": {
+        "summary": "Get shared video",
+        "description": "Gets an array of videos shared with the user. This can only be done by the logged in user",
+        "tags": [
+          "user"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VideoItem"
+                  },
+                  "example": [
+                    {
+                      "fromUserWithId": 2,
+                      "dataValues": {
+                        "id": 4,
+                        "title": "Another video about stars",
+                        "description": "Some text...",
+                        "video": "fbfa71ed-f859-44a1-9964-7e174356238e.mp4",
+                        "createdAt": "2022-07-29T11:48:48.284Z",
+                        "updatedAt": "2022-07-29T11:48:48.284Z"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authorized"
+          },
+          "404": {
+            "description": "Bad request"
+          }
+        }
+      }
+    },
+    "/api/user/registration": {
+      "post": {
+        "summary": "Registers a user",
+        "description": "Creating and adding a new user to the database",
+        "tags": [
+          "user"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              },
+              "example": {
+                "email": "user123@gmail.com",
+                "password": "123456"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                },
+                "example": {
+                  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJ1c2VyMTJAZ21haWwuY29tIiwiaWF0IjoxNjU5NjA0NzQwLCJleHAiOjNTk2MDY1NDB9.AMIyTJgEcBd5ZgJjOBuYS6n8xasi-41bKrwq-OHjFXM",
+                  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJ1c2VyMTJAZ21haWwuY29tIiwiaWF0IjoxNjU5NjA0NzQwLCJleHAiOjNjIxOTY3NDB9.OdmG2_iDhFC7ZLJ_C_LHO_ZqFTqNUNoayKejzY0Pcc4",
+                  "id": 5,
+                  "email": "user123@gmail.com"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bad request"
+          }
+        }
+      }
+    },
+    "/api/user/login": {
+      "post": {
+        "summary": "Logs user into the system",
+        "description": "Logs user and returns accsess token",
+        "tags": [
+          "user"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              },
+              "example": {
+                "email": "user123@gmail.com",
+                "password": "123456"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                },
+                "example": {
+                  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJ1c2VyMTJAZ21haWwuY29tIiwiaWF0IjoxNjU5NjA0NzQwLCJleHAiOjNTk2MDY1NDB9.AMIyTJgEcBd5ZgJjOBuYS6n8xasi-41bKrwq-OHjFXM",
+                  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJ1c2VyMTJAZ21haWwuY29tIiwiaWF0IjoxNjU5NjA0NzQwLCJleHAiOjNjIxOTY3NDB9.OdmG2_iDhFC7ZLJ_C_LHO_ZqFTqNUNoayKejzY0Pcc4",
+                  "id": 5,
+                  "email": "user123@gmail.com"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bad request"
+          }
+        }
+      }
+    },
+    "/api/user/logout": {
+      "post": {
+        "summary": "Logs out current logged in user session",
+        "description": "Logs out current logged in user session",
+        "tags": [
+          "user"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Token has been successfully deleted"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Bad request"
+          }
+        }
+      }
+    },
+    "/api/user/share": {
+      "post": {
+        "summary": "Share video with user",
+        "description": "Shares video with any user",
+        "tags": [
+          "user"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VideoItem"
+              },
+              "example": {
+                "idReceiver": "1",
+                "id": "2",
+                "title": "Sky",
+                "description": "Video about stars",
+                "video": "5f8a4652-64a6-4f14-af50-89b4c88ec7c2.mp4"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VideoItem"
+                },
+                "example": {
+                  "message": "Video has been successfully shared",
+                  "dataValues": {
+                    "id": 6,
+                    "videoOwnerId": 3,
+                    "videoReceiverId": 1,
+                    "videoItemId": 6,
+                    "updatedAt": "2022-08-04T14:10:32.514Z",
+                    "createdAt": "2022-08-04T14:10:32.514Z"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authorized"
+          },
+          "404": {
+            "description": "Bad request"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 10
+          },
+          "email": {
+            "type": "string",
+            "example": "user123@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "123456"
+          }
+        }
+      },
+      "VideoItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 10
+          },
+          "title": {
+            "type": "string",
+            "example": "Sky"
+          },
+          "description": {
+            "type": "string",
+            "example": "Video about stars"
+          },
+          "video": {
+            "type": "string",
+            "example": "5f8a4652-64a6-4f14-af50-89b4c88ec7c2.mp4"
+          }
+        }
+      }
+    }
+  }
+}

@@ -127,9 +127,8 @@ class UserController {
                 return res.json({message: "You have already shared this video with this user"})
             }else{
                 sharedVideo = await SharedVideo.create({videoOwnerId: userData.id, videoReceiverId: idReceiver, videoItemId: videoItem.id })
-
             }
-            res.json({message: "Video has been successfully shared", ...sharedVideo})
+            res.json({message: "Video has been successfully shared", dataValues: {...sharedVideo.dataValues}})
         }catch (e:any){
             userLogger.error(e.message)
             next(ApiError.badRequest(e.message))

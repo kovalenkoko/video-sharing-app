@@ -9,6 +9,8 @@ const fileUpload = require("express-fileupload")
 const path = require("path")
 const cookieParser = require("cookie-parser")
 const log4js = require("log4js");
+const swaggerUi = require("swagger-ui-express")
+const swaggerDocument = require("./src/swagger/openapi.json")
 
 
 log4js.configure({
@@ -24,6 +26,8 @@ app.use(express.static(path.resolve(__dirname, "static")))
 app.use(fileUpload({}))
 app.use("/api", router)
 app.use(errorHandler)
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 const PORT = process.env.PORT || 5050
 
