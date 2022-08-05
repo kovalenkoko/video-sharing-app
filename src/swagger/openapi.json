@@ -13,6 +13,10 @@
     {
       "name": "user",
       "description": "Operations about user"
+    },
+    {
+      "name": "gallery",
+      "description": "Operetions with gallery"
     }
   ],
   "paths": {
@@ -285,6 +289,186 @@
                     "updatedAt": "2022-08-04T14:10:32.514Z",
                     "createdAt": "2022-08-04T14:10:32.514Z"
                   }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authorized"
+          },
+          "404": {
+            "description": "Bad request"
+          }
+        }
+      }
+    },
+    "/api/gallery": {
+      "get": {
+        "summary": "Returns all videos that user has",
+        "description": "This can only be done by the logged in user.",
+        "tags": [
+          "gallery"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VideoItem"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authorized"
+          }
+        }
+      },
+      "post": {
+        "summary": "Adding video to the gallery",
+        "description": "Adds any video to the user's gallery. This can only be done by the logged in user.",
+        "tags": [
+          "gallery"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VideoItem"
+              },
+              "example": {
+                "title": "Sky",
+                "description": "Video about stars"
+              }
+            },
+            "video/mp4": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VideoItem"
+                },
+                "example": {
+                  "message": "Video added to the user's gallery with id:4"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authorized"
+          },
+          "404": {
+            "description": "Bad request"
+          }
+        }
+      },
+      "put": {
+        "summary": "Updating info about video",
+        "description": "Updates video info. This can only be done by the logged in user.",
+        "tags": [
+          "gallery"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VideoItem"
+              },
+              "example": {
+                "title": "Sky",
+                "description": "Video about stars",
+                "updatedTitle": "Updated sky",
+                "updatedDescription": "Updated video about stars"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VideoItem"
+                },
+                "example": {
+                  "message": "VideoItem with old title: Sky was successfully updated"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authorized"
+          },
+          "404": {
+            "description": "Bad request"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deleting video from gallery",
+        "description": "Removes video from user's gallery. This can only be done by the logged in user.",
+        "tags": [
+          "gallery"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VideoItem"
+              },
+              "example": {
+                "title": "Sky",
+                "description": "Video about stars"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VideoItem"
+                },
+                "example": {
+                  "message": "VideoItem with title: Sky from gallery with id: 2 was successfully deleted"
                 }
               }
             }
